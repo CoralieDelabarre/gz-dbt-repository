@@ -65,4 +65,49 @@ sources:
             description: logistical cost of the order
           - name: ship_cost
             description: cost of each sending order 
-     
+
+
+
+models:
+  - name: int_orders_margin.sql
+    description: model with orders_id, date_date, total_revenue, total_quantity, total_purchase_cost, total_margin     
+    columns:
+          - name: orders_id
+            description: id of each products
+            tests:
+            - unique:
+                column_name: orders_id
+            - not_null:
+                column_name: orders_id
+          - name: total_revenue
+            description: sum of revenue
+          - name: date_date
+            description: date of purchase
+          - name: total_quantity
+            description: sum of quantity
+          - name: total_purchase_cost
+            description: sum of purchase_cost
+          - name: total_margin
+            description: sum of the margin
+
+        
+  - name: int_orders_operational.sql
+    description: model with calcul of operational margin
+    columns:
+      - name: orders_id
+        description: id of each products
+        tests:
+            - unique:
+                column_name: orders_id
+            - not_null:
+                column_name: orders_id
+
+  - name: int_sales_margin.sql
+    description: calcul of purchase cost and margin
+    columns:
+      - name: purchase_cost
+        description: calcul quantity * purchase_prise
+      - name: margin
+        description: purchase_cost * quantity
+      
+      
