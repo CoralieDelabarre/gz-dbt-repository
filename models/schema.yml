@@ -1,0 +1,113 @@
+# schema.yml
+
+version: 2 
+
+sources:
+  - name: raw
+    schema: gz_raw_data
+    description: data from the exercice 3 
+    tables:
+      - name: sales 
+        identifier: raw_gz_sales 
+        description: sales of Greenweez / we have one row per product_id found in each orders_id
+        
+        # Freshness testing - make sure to fill in the ...
+        loaded_at_field: "CAST (date_date AS TIMESTAMP)"
+        freshness: 
+          warn_after:
+            count: 90
+            period: day
+        
+        columns:
+          - name: products_id
+            description: id of each products
+          - name: orders_id
+            description: id of each orders
+          - name: date_date
+            description: date of purchase
+          - name: revenue
+            description: the price of the order
+          - name: quantity
+            description: number of product in each order
+
+        
+      - name: product
+        identifier: raw_gz_product
+        description: products of Greenweez / we have on row per product_id and his purchase price
+        columns: 
+          - name: products_id
+            description: the id oh each products
+            tests:
+            - unique:
+                column_name: products_id
+            - not_null:
+                column_name: products_id
+                
+          - name: purchase_price
+            description: price of the product
+           
+      - name: ship
+        identifier: raw_gz_ship
+        description: ships of Greenweez / we have one row per orders_id and its shipping_fee, logcost & ship_cost
+        columns:
+          - name: orders_id
+            description: id of each orders
+            tests:
+            - unique:
+                column_name: orders_id
+            - not_null:
+                column_name: orders_id
+            
+                
+          - name: shipping_fee
+            description: price of the shipping fee for the customer
+          - name: log_cost
+            description: logistical cost of the order
+          - name: ship_cost
+            description: cost of each sending order 
+
+
+
+models:
+  - name: int_orders_margin.sql
+    description: model with orders_id, date_date, total_revenue, total_quantity, total_purchase_cost, total_margin     
+    columns:
+          - name: orders_id
+            description: id of each products
+            tests:
+            - unique:
+                column_name: orders_id
+            - not_null:
+                column_name: orders_id
+          - name: total_revenue
+            description: sum of revenue
+          - name: date_date
+            description: date of purchase
+          - name: total_quantity
+            description: sum of quantity
+          - name: total_purchase_cost
+            description: sum of purchase_cost
+          - name: total_margin
+            description: sum of the margin
+
+        
+  - name: int_orders_operational.sql
+    description: model with calcul of operational margin
+    columns:
+      - name: orders_id
+        description: id of each products
+        tests:
+            - unique:
+                column_name: orders_id
+            - not_null:
+                column_name: orders_id
+
+  - name: int_sales_margin.sql
+    description: calcul of purchase cost and margin
+    columns:
+      - name: purchase_cost
+        description: calcul quantity * purchase_prise
+      - name: margin
+        description: purchase_cost * quantity
+      
+      
